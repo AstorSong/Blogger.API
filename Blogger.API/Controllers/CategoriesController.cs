@@ -1,6 +1,7 @@
 ﻿using Blogger.API.Data;
 using Blogger.API.Models.Domain;
 using Blogger.API.Models.DTO;
+using Blogger.API.Repositories.Interface;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,11 +12,11 @@ namespace Blogger.API.Controllers
     [ApiController]
     public class CategoriesController : ControllerBase
     {
-        private readonly ApplicationDbContext dbContext;
+        private readonly ICategoryRepository categoryRepository;
 
-        public CategoriesController(ApplicationDbContext dbContext)
+        public CategoriesController(ICategoryRepository categoryRepository)
         {
-            this.dbContext = dbContext;
+            this.categoryRepository = categoryRepository;
         }
 
         // 
@@ -29,8 +30,7 @@ namespace Blogger.API.Controllers
                 UrlHandle = request.UrlHandle
             };
 
-            await dbContext.Categories.AddAsync(category);
-            await dbContext.SaveChangesAsync();
+            await categoryRepository.CreateAsync(category);
 
             // Domain Model to DTO
             var response = new CategoryDto
